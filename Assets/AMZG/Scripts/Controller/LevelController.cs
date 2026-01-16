@@ -6,6 +6,8 @@ using UnityEditor.AI;
 #endif
 using UnityEngine;
 using UnityEngine.AI;
+public enum HoleSize { Size1x1, Size2x3, Size3x2 }
+public enum HoleType { Normal, Vertical, Horizontal, Ice, Immovable}
 
 public class LevelController : Singleton<LevelController>
 {
@@ -14,12 +16,23 @@ public class LevelController : Singleton<LevelController>
     private string levelPrefabBasePath = "Base/";
     private string prefabPath = "/AMZG/Prefabs/Resources/";
     private const string levelPrefix = "Level_";
-    public int CurrentLevel = 0;
-    public SingleLevelController LoadedLevel;
-    public SingleLevelController Level;
-    public int levelIndex;
-    public List<LevelAsset> ListLevelSpecials = new List<LevelAsset>();
+    [HideInInspector] public int CurrentLevel = 0;
+    [HideInInspector] public SingleLevelController LoadedLevel;
+    [HideInInspector] public SingleLevelController Level;
+    [HideInInspector] public int levelIndex;
+    [HideInInspector] public List<LevelAsset> ListLevelSpecials = new List<LevelAsset>();
     //public StoryAsset[] ListStoryAssets;
+
+    [HideInInspector] public int gridWidth = 5;
+    [HideInInspector] public int gridHeight = 5;
+
+    public bool[,] gridData;
+    public bool[,] gridDataHole;
+
+    [HideInInspector] public bool isHole; 
+    [HideInInspector] public HoleSize selectedHoleSize; 
+    [HideInInspector] public HoleType selectedHoleType;
+    [HideInInspector] public Sprite currentHoleSprite;
 
     protected override void Awake()
     {
@@ -206,6 +219,16 @@ public class LevelController : Singleton<LevelController>
             Level.name = levelPrefix + CurrentLevel;
         }
     }
+
+    public void EditorCreateGrid()
+    {
+
+    }   
+    
+    public void EditorClearGrid()
+    {
+
+    }    
 
 
     public void EditorSaveLevel()
