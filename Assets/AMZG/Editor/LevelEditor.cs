@@ -140,11 +140,11 @@ public class LevelEditor : Editor
 
                 if (GUILayout.Button(hasCell ? "X" : "", GUILayout.Width(25), GUILayout.Height(25)))
                 {
-                    /*if (hasCell)
+                    if (hasCell)
                         levelController.EditorDeleteCell(x, y);
                     else
                         levelController.EditorCreateCell(x, y);
-*/
+
                     EditorUtility.SetDirty(levelController);
                     EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
                 }

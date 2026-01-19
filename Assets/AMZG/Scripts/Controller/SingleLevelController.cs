@@ -13,6 +13,8 @@ public struct StageTransform
 
 public class SingleLevelController : MonoBehaviour
 {
+    public GridDataAsset DataAsset;
+
     public virtual void SetUp()
     {
     }

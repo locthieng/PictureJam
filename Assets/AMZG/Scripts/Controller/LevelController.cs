@@ -3,9 +3,12 @@ using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.AI;
+using UnityEditor.SceneManagement;
+
 #endif
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 public enum HoleSize { Size1x1, Size2x3, Size3x2 }
 public enum HoleType { Normal, Vertical, Horizontal, Ice, Immovable}
 
@@ -16,6 +19,7 @@ public class LevelController : Singleton<LevelController>
     private string levelPrefabBasePath = "Base/";
     private string prefabPath = "/AMZG/Prefabs/Resources/";
     private const string levelPrefix = "Level_";
+    public const float CellSpacing = 1.0f;
     [HideInInspector] public int CurrentLevel = 0;
     [HideInInspector] public SingleLevelController LoadedLevel;
     [HideInInspector] public SingleLevelController Level;
@@ -26,6 +30,8 @@ public class LevelController : Singleton<LevelController>
     [HideInInspector] public int gridWidth = 5;
     [HideInInspector] public int gridHeight = 5;
 
+    private Grid grid;
+
     public bool[,] gridData;
     public bool[,] gridDataHole;
 
@@ -33,6 +39,9 @@ public class LevelController : Singleton<LevelController>
     [HideInInspector] public HoleSize selectedHoleSize; 
     [HideInInspector] public HoleType selectedHoleType;
     [HideInInspector] public Sprite currentHoleSprite;
+
+    public GameObject cellPrefab;
+
 
     protected override void Awake()
     {
@@ -182,6 +191,30 @@ public class LevelController : Singleton<LevelController>
         }
         Level = g.GetComponent<SingleLevelController>();
         Level.name = levelPrefix + level;
+        if (gridData == null || gridData.GetLength(0) != gridWidth || gridData.GetLength(1) != gridHeight)
+        {
+            gridData = new bool[gridWidth, gridHeight];
+        }
+
+        if (gridDataHole == null || gridDataHole.GetLength(0) != gridWidth || gridDataHole.GetLength(1) != gridHeight)
+        {
+            gridDataHole = new bool[gridWidth, gridHeight];
+        }
+
+        Grid existingGrid = Level.GetComponentInChildren<Grid>();
+        if (existingGrid == null)
+        {
+            GameObject gridObj = new GameObject("Grid");
+            gridObj.transform.SetParent(Level.transform);
+            gridObj.transform.localPosition = Vector3.zero;
+            grid = gridObj.AddComponent<Grid>();
+        }
+        else
+        {
+            grid = existingGrid;
+        }
+
+        LoadGridDataFromAsset();
     }
 
     public void EditorLoadPrevLevel()
@@ -222,12 +255,72 @@ public class LevelController : Singleton<LevelController>
 
     public void EditorCreateGrid()
     {
+        if (Level == null) return;
 
-    }   
-    
+        EditorClearGrid();
+
+        if (grid == null)
+        {
+            GameObject gridObj = new GameObject("Grid");
+            gridObj.transform.SetParent(Level.transform);
+            gridObj.transform.localPosition = Vector3.zero;
+            grid = gridObj.AddComponent<Grid>();
+        }
+
+        gridData = new bool[gridWidth, gridHeight];
+        gridDataHole = new bool[gridWidth, gridHeight];
+
+        float spacing = 1f;
+
+        Vector3 originOffset = new Vector3(
+            -(gridWidth - 1) * spacing * 0.5f,
+            0f,
+            -(gridHeight - 1) * spacing * 0.5f
+        );
+
+        for (int z = 0; z < gridHeight; z++)
+        {
+            for (int x = 0; x < gridWidth; x++)
+            {
+                Vector3 pos = new Vector3(
+                    x * spacing,
+                    0f,
+                    z * spacing
+                ) + originOffset;
+
+                GameObject cell = (GameObject)PrefabUtility.InstantiatePrefab(cellPrefab, grid.transform);
+                cell.transform.localPosition = pos;
+                cell.name = $"Cell_{x}_{z}";
+
+                gridData[x, z] = true;
+                gridDataHole[x, z] = true;
+            }
+        }
+
+        EditorUtility.SetDirty(this);
+        EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+    }
+
     public void EditorClearGrid()
     {
+        if (grid != null)
+        {
+            Object.DestroyImmediate(grid.gameObject);
+            grid = null;
+        }
 
+        Transform cellRoot = Level.transform.Find("Grid");
+        if (cellRoot != null)
+            Object.DestroyImmediate(cellRoot.gameObject);
+
+        if (gridData != null)
+            gridData = new bool[gridWidth, gridHeight];
+
+        if (gridDataHole != null)
+            gridDataHole = new bool[gridWidth, gridHeight];
+
+        EditorUtility.SetDirty(this);
+        EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
     }    
 
 
@@ -247,7 +340,7 @@ public class LevelController : Singleton<LevelController>
             }
 
             // Recheck all of level's objects
-
+            SaveGridDataToAsset();
             DoSaveAssetDatabase();
         }
     }
@@ -339,6 +432,98 @@ public class LevelController : Singleton<LevelController>
         {
             ID = ListLevelSpecials.Count
         });
+    }
+
+    public void EditorDeleteCell(int x, int y)
+    {
+        if (Level == null) return;
+        if (grid == null) return;
+
+        Transform t = grid.transform.Find($"Cell_{x}_{y}");
+        if (t != null)
+        {
+            Object.DestroyImmediate(t.gameObject);
+            gridData[x, y] = false;
+            gridDataHole[x, y] = false; // đồng bộ
+        }
+    }
+
+    public void EditorCreateCell(int x, int y)
+    {
+        if (Level == null) return;
+        if (grid == null || cellPrefab == null) return;
+        Transform exist = grid.transform.Find($"Cell_{x}_{y}");
+        if (exist != null) return;
+
+        Vector3 originOffset = new Vector3(
+            -(gridWidth - 1) * CellSpacing * 0.5f,
+            -(gridHeight - 1) * CellSpacing * 0.5f,
+            0
+        );
+        Vector3 pos = new Vector3(x * CellSpacing, y * CellSpacing, 0) + originOffset;
+        GameObject newCell = (GameObject)PrefabUtility.InstantiatePrefab(cellPrefab, grid.transform);
+        newCell.transform.localPosition = pos;
+        newCell.name = $"Cell_{x}_{y}";
+        gridData[x, y] = true;
+        gridDataHole[x, y] = true; // đồng bộ
+    }
+
+    private void LoadGridDataFromAsset()
+    {
+        if (Level == null) return;
+
+        string path = $"GridData/{Level.name}_GridData";
+        GridDataAsset data = Resources.Load<GridDataAsset>(path);
+        if (data == null)
+        {
+            Debug.LogWarning($"⚠️ Grid data asset not found: {path}");
+            return;
+        }
+
+        Level.DataAsset = data;
+
+        gridWidth = data.width;
+        gridHeight = data.height;
+        gridData = new bool[gridWidth, gridHeight];
+        gridDataHole = new bool[gridWidth, gridHeight];
+
+        int index = 0;
+        for (int y = 0; y < gridHeight; y++)
+        {
+            for (int x = 0; x < gridWidth; x++)
+            {
+                gridData[x, y] = data.grid[index];
+                gridDataHole[x, y] = data.gridHole[index];
+                index++;
+            }
+        }
+
+    }
+    private void SaveGridDataToAsset()
+    {
+        if (Level == null) return;
+
+        string folderPath = "Assets/Resources/GridData";
+        if (!System.IO.Directory.Exists(folderPath))
+            System.IO.Directory.CreateDirectory(folderPath);
+
+        GridDataAsset data = ScriptableObject.CreateInstance<GridDataAsset>();
+        data.width = gridWidth;
+        data.height = gridHeight;
+        data.grid = new List<bool>();
+        data.gridHole = new List<bool>();
+
+        for (int y = 0; y < gridHeight; y++)
+        {
+            for (int x = 0; x < gridWidth; x++)
+            {
+                data.grid.Add(gridData != null && gridData[x, y]);
+                data.gridHole.Add(gridDataHole != null && gridDataHole[x, y]);
+            }
+        }
+        string path = $"{folderPath}/{Level.name}_GridData.asset";
+        UnityEditor.AssetDatabase.CreateAsset(data, path);
+        UnityEditor.AssetDatabase.SaveAssets();
     }
 
     internal void ShowHint()

@@ -1,0 +1,28 @@
+Spine_Ingame_Hand.png
+	size: 1200, 1200
+FX_Alpha
+	bounds: 2, 601, 598, 597
+	offsets: 26, 29, 650, 651
+FX_LightGlow
+	bounds: 2, 2, 598, 597
+	offsets: 25, 28, 648, 649
+FX_Star
+	bounds: 602, 765, 435, 433
+	offsets: 69, 64, 570, 564
+Finger
+	bounds: 716, 669, 53, 94
+	offsets: 0, 0, 61, 94
+Finger_Stroke
+	bounds: 602, 538, 54, 96
+Hand
+	bounds: 1039, 1073, 110, 125
+	offsets: 2, 1, 113, 127
+Hand_Stroke
+	bounds: 602, 636, 112, 127
+	offsets: 1, 1, 114, 129
+Thumb
+	bounds: 771, 674, 60, 89
+	offsets: 1, 1, 62, 91
+Thumb_Stroke
+	bounds: 1039, 981, 62, 90
+	offsets: 1, 1, 64, 92
