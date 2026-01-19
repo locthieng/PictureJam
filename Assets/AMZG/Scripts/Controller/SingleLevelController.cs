@@ -14,6 +14,7 @@ public struct StageTransform
 public class SingleLevelController : MonoBehaviour
 {
     public GridDataAsset DataAsset;
+    [SerializeField] public List<MoveBlock> moveBlocks = new List<MoveBlock>();
 
     public virtual void SetUp()
     {

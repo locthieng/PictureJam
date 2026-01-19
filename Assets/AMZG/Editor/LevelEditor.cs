@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Codice.CM.Client.Differences;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -10,8 +12,43 @@ using UnityEngine.SceneManagement;
 public class LevelEditor : Editor
 {
     private LevelController levelController;
-    //[HideInInspector] public bool isHole;
+    private SerializedProperty enableSnapProp;
 
+    //[HideInInspector] public bool isHole;
+    private void OnEnable()
+    {
+        levelController = (LevelController)target;
+        enableSnapProp = serializedObject.FindProperty("enableSnapInEditor");
+        SceneView.duringSceneGui += OnSceneGUI;
+    }
+
+    private void OnDisable()
+    {
+        SceneView.duringSceneGui -= OnSceneGUI;
+    }
+
+    private void OnSceneGUI(SceneView sceneView)
+    {
+        if (levelController == null || !levelController.EnableSnapInEditor) return;
+
+        foreach (MoveBlock t in levelController.Level.moveBlocks)
+        {
+            if (t == null) continue;
+
+            // Snap only if it's selected and moved
+            if (Selection.transforms.Contains(t.transform) && GUIUtility.hotControl == 0)
+            {
+                Vector3 oldPos = t.transform.position;
+                Vector3 snappedPos = levelController.GetSnappedPosition(oldPos);
+
+                if (Vector3.Distance(oldPos, snappedPos) > 0.01f)
+                {
+                    Undo.RecordObject(t.transform, "Snap MoveBlock to Grid");
+                    t.transform.position = snappedPos;
+                }
+            }
+        }
+    }
 
     public override void OnInspectorGUI()
     {
@@ -51,7 +88,7 @@ public class LevelEditor : Editor
 
         // Toggle
 
-        GUILayout.BeginVertical("BOX");
+        /*GUILayout.BeginVertical("BOX");
 
         // Dòng 1: Nút bật tắt Hole
         GUILayout.BeginHorizontal();
@@ -99,7 +136,7 @@ public class LevelEditor : Editor
             EditorGUI.indentLevel--;
         }
 
-        GUILayout.EndVertical();
+        GUILayout.EndVertical();*/
 
 
 
@@ -108,7 +145,7 @@ public class LevelEditor : Editor
 
         EditorGUILayout.Space(10);
 
-        levelController.gridWidth = EditorGUILayout.IntField("Grid Width", levelController.gridWidth);
+        /*levelController.gridWidth = EditorGUILayout.IntField("Grid Width", levelController.gridWidth);
         levelController.gridHeight = EditorGUILayout.IntField("Grid Height", levelController.gridHeight);
 
         if (levelController.gridData == null ||
@@ -117,14 +154,14 @@ public class LevelEditor : Editor
         {
             levelController.gridData = new bool[levelController.gridWidth, levelController.gridHeight];
             levelController.gridDataHole = new bool[levelController.gridWidth, levelController.gridHeight];
-        }
+        }*/
 
         EditorGUILayout.Space(10);
 
         // =========================
         // === DRAW 2 GRIDS SIDE BY SIDE ===
         // =========================
-        GUILayout.BeginHorizontal();
+        /*GUILayout.BeginHorizontal();
 
         // --- MAIN GRID ---
         GUILayout.BeginVertical("box");
@@ -188,7 +225,7 @@ public class LevelEditor : Editor
         }
         GUILayout.EndVertical();
 
-        GUILayout.EndHorizontal();
+        GUILayout.EndHorizontal();*/
 
         EditorGUILayout.Space(15);
 
@@ -196,7 +233,7 @@ public class LevelEditor : Editor
         // === CREATE / CLEAR BUTTONS ===
         // =========================
         GUILayout.BeginHorizontal();
-        if (GUILayout.Button("Create Grid", GUILayout.Height(30)))
+        /*if (GUILayout.Button("Create Grid", GUILayout.Height(30)))
         {
             levelController.EditorCreateGrid();
             EditorUtility.SetDirty(levelController);
@@ -208,7 +245,7 @@ public class LevelEditor : Editor
             levelController.EditorClearGrid();
             EditorUtility.SetDirty(levelController);
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
-        }
+        }*/
 
 
         EditorGUILayout.EndHorizontal(); 
@@ -220,7 +257,41 @@ public class LevelEditor : Editor
             levelController.EditorSaveLevel();
         }
 
-        EditorGUILayout.EndVertical(); 
+        EditorGUILayout.EndVertical();
+
+        GUILayout.Space(10);
+
+        EditorGUILayout.PropertyField(enableSnapProp, new GUIContent("Enable Snap in Editor"));
+
+        if (GUILayout.Button("Refresh MoveBlocks Cache"))
+        {
+            levelController.RefreshMoveBlocks();
+        }
+
+        if (GUILayout.Button("Snap All MoveBlocks"))
+        {
+            foreach (MoveBlock t in levelController.Level.moveBlocks)
+            {
+                if (t == null) continue;
+                Undo.RecordObject(t.transform, "Snap MoveBlock to Grid");
+                t.transform.position = levelController.GetSnappedPosition(t.transform.position);
+            }
+        }
+
+        GUILayout.Space(10);
+
+        if (GUILayout.Button("Generate Grid Visual and Walls"))
+        {
+            levelController.GenerateGridVisual(); // Tạo grid và tường
+        }
+
+        if (GUILayout.Button("Clear Grid Visual and Walls"))
+        {
+            levelController.ClearGeneratedVisuals(); // Xóa tất cả các tile visual và tường
+        }
+
+        serializedObject.ApplyModifiedProperties();
+        EditorUtility.SetDirty(levelController);
 
         if (GUI.changed)
         {
