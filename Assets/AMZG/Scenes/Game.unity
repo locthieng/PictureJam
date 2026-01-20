@@ -12774,6 +12774,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4769866758264423842, guid: 4effcf23e6f340e4087a275c42495f29, type: 3}
+      propertyPath: targetPicture
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4769866758264423844, guid: 4effcf23e6f340e4087a275c42495f29, type: 3}
       propertyPath: m_Name
       value: Level_1
