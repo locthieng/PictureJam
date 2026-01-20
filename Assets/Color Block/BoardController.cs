@@ -17,14 +17,19 @@ public class BoardController : MonoBehaviour
 #if UNITY_EDITOR
     [SerializeField] private bool enableSnapInEditor = false;
     [SerializeField] private List<MoveBlock> moveBlocks = new List<MoveBlock>();
+    [SerializeField] private List<MoveObstacle> moveObstacles = new List<MoveObstacle>();
 
     public bool EnableSnapInEditor => enableSnapInEditor;
     public List<MoveBlock> MoveBlocks => moveBlocks;
+    public List<MoveObstacle> MoveObstacles => moveObstacles;
 
     public void RefreshMoveBlocks()
     {
         moveBlocks.Clear();
         moveBlocks = new List<MoveBlock>(GetComponentsInChildren<MoveBlock>());
+
+        moveObstacles.Clear();
+        moveObstacles = new List<MoveObstacle>(GetComponentsInChildren<MoveObstacle>());
     }
 #endif
 

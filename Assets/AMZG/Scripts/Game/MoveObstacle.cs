@@ -1,22 +1,20 @@
-using TMPro.Examples;
+﻿using TMPro.Examples;
 using UnityEngine;
 
-public enum BlockType
+public enum ObstacleType
 {
     Normal,
     Horizontal,
     Vertical,
-    Ice,
-    Glued,
-    Nailed
+    Immoblie
 }
 
-public class MoveBlock : MonoBehaviour
+public class MoveObstacle : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private LayerMask obstacleMask;
     [SerializeField] private LayerMask moveBlockMask;
-    [SerializeField] private BlockType Type;
+    [SerializeField] private ObstacleType Type;
 
     private Rigidbody rb;
     private Camera cam;
@@ -154,7 +152,7 @@ public class MoveBlock : MonoBehaviour
         float moveZ = ComputeAxisMovement(Vector3.forward * Mathf.Sign(direction.z), Mathf.Abs(direction.z), moveStep);
         nextPosition.z += moveZ;
 
-        
+
         // ✅ Kiểm tra tổng thể sau khi tính cả X & Z
         Vector3 moveDelta = nextPosition - current;
         if (moveDelta != Vector3.zero)

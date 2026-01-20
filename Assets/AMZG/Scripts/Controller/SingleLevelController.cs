@@ -16,6 +16,8 @@ public class SingleLevelController : MonoBehaviour
     public GridDataAsset DataAsset;
     [SerializeField] public List<MoveBlock> moveBlocks = new List<MoveBlock>();
 
+    [SerializeField] private int targetPicture;
+
     public virtual void SetUp()
     {
     }

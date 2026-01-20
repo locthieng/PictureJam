@@ -42,6 +42,25 @@ public class BoardControllerEditor : Editor
                 }
             }
         }
+
+        foreach (MoveObstacle t in board.MoveObstacles)
+        {
+            if (t == null) continue;
+
+            // Snap only if it's selected and moved
+            if (Selection.transforms.Contains(t.transform) && GUIUtility.hotControl == 0)
+            {
+                Vector3 oldPos = t.transform.position;
+                Vector3 snappedPos = board.GetSnappedPosition(oldPos);
+
+                if (Vector3.Distance(oldPos, snappedPos) > 0.01f)
+                {
+                    Undo.RecordObject(t.transform, "Snap MoveBlock to Grid");
+                    t.transform.position = snappedPos;
+                }
+            }
+        }
+            
     }
 
     public override void OnInspectorGUI()
@@ -54,14 +73,21 @@ public class BoardControllerEditor : Editor
 
         EditorGUILayout.PropertyField(enableSnapProp, new GUIContent("Enable Snap in Editor"));
 
-        if (GUILayout.Button("Refresh MoveBlocks Cache"))
+        if (GUILayout.Button("Refresh MoveBlocks + MoveObstacles Cache"))
         {
             board.RefreshMoveBlocks();
         }
 
-        if (GUILayout.Button("Snap All MoveBlocks"))
+        if (GUILayout.Button("Snap All MoveBlocks + MoveObstacles"))
         {
             foreach (MoveBlock t in board.MoveBlocks)
+            {
+                if (t == null) continue;
+                Undo.RecordObject(t.transform, "Snap MoveBlock to Grid");
+                t.transform.position = board.GetSnappedPosition(t.transform.position);
+            }
+            
+            foreach (MoveObstacle t in board.MoveObstacles)
             {
                 if (t == null) continue;
                 Undo.RecordObject(t.transform, "Snap MoveBlock to Grid");

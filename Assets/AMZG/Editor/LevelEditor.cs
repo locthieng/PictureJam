@@ -12,43 +12,6 @@ using UnityEngine.SceneManagement;
 public class LevelEditor : Editor
 {
     private LevelController levelController;
-    private SerializedProperty enableSnapProp;
-
-    //[HideInInspector] public bool isHole;
-    private void OnEnable()
-    {
-        levelController = (LevelController)target;
-        enableSnapProp = serializedObject.FindProperty("enableSnapInEditor");
-        SceneView.duringSceneGui += OnSceneGUI;
-    }
-
-    private void OnDisable()
-    {
-        SceneView.duringSceneGui -= OnSceneGUI;
-    }
-
-    private void OnSceneGUI(SceneView sceneView)
-    {
-        if (levelController == null || !levelController.EnableSnapInEditor) return;
-
-        foreach (MoveBlock t in levelController.Level.moveBlocks)
-        {
-            if (t == null) continue;
-
-            // Snap only if it's selected and moved
-            if (Selection.transforms.Contains(t.transform) && GUIUtility.hotControl == 0)
-            {
-                Vector3 oldPos = t.transform.position;
-                Vector3 snappedPos = levelController.GetSnappedPosition(oldPos);
-
-                if (Vector3.Distance(oldPos, snappedPos) > 0.01f)
-                {
-                    Undo.RecordObject(t.transform, "Snap MoveBlock to Grid");
-                    t.transform.position = snappedPos;
-                }
-            }
-        }
-    }
 
     public override void OnInspectorGUI()
     {
@@ -260,38 +223,6 @@ public class LevelEditor : Editor
         EditorGUILayout.EndVertical();
 
         GUILayout.Space(10);
-
-        EditorGUILayout.PropertyField(enableSnapProp, new GUIContent("Enable Snap in Editor"));
-
-        if (GUILayout.Button("Refresh MoveBlocks Cache"))
-        {
-            levelController.RefreshMoveBlocks();
-        }
-
-        if (GUILayout.Button("Snap All MoveBlocks"))
-        {
-            foreach (MoveBlock t in levelController.Level.moveBlocks)
-            {
-                if (t == null) continue;
-                Undo.RecordObject(t.transform, "Snap MoveBlock to Grid");
-                t.transform.position = levelController.GetSnappedPosition(t.transform.position);
-            }
-        }
-
-        GUILayout.Space(10);
-
-        if (GUILayout.Button("Generate Grid Visual and Walls"))
-        {
-            levelController.GenerateGridVisual(); // Tạo grid và tường
-        }
-
-        if (GUILayout.Button("Clear Grid Visual and Walls"))
-        {
-            levelController.ClearGeneratedVisuals(); // Xóa tất cả các tile visual và tường
-        }
-
-        serializedObject.ApplyModifiedProperties();
-        EditorUtility.SetDirty(levelController);
 
         if (GUI.changed)
         {
