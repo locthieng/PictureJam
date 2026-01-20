@@ -16,7 +16,7 @@ public class SingleLevelController : MonoBehaviour
     public GridDataAsset DataAsset;
     [SerializeField] public List<MoveBlock> moveBlocks = new List<MoveBlock>();
 
-    [SerializeField] private int targetPicture;
+    [SerializeField] public int targetPicture;
 
     public virtual void SetUp()
     {
@@ -30,6 +30,17 @@ public class SingleLevelController : MonoBehaviour
     {
     }
 
+    public void CheckWin(bool isActive)
+    {
+        targetPicture--;
+
+        if (targetPicture == 0)
+        {
+            Debug.Log("win");
+            StageController.Instance.End(isActive);
+        } 
+            
+    }    
 
     private void OnDestroy()
     {

@@ -175,7 +175,7 @@ public class StageController : MonoBehaviour
     {
         if (win)
         {
-            yield return new WaitForSeconds(2f);
+            //yield return new WaitForSeconds(2f);
             if (!DataController.Instance.Data.Levels.Contains(GlobalController.CurrentLevelIndex) || GlobalController.CurrentLevelIndex == 1)
             {
                 DataController.Instance.Data.Levels.Add(GlobalController.CurrentLevelIndex);
@@ -190,7 +190,7 @@ public class StageController : MonoBehaviour
         }
         else
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0f);
             //AnalyticsController.Instance.LogLevelFail(GlobalController.CurrentLevelIndex, (int)(Time.realtimeSinceStartup - playTimeInSeconds), GlobalController.ReplayCount);
             StartCoroutine(CoShowEndGameUI(false));
         }

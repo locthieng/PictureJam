@@ -5,6 +5,7 @@ using UnityEngine;
 public class PictureJam : MonoBehaviour
 {
     [SerializeField] private bool isParent;
+    [SerializeField] private LevelController levelController;
     [SerializeField] private Transform[] truePoints;
     [SerializeField] private MoveBlock[] childBlocks;
 
@@ -12,13 +13,14 @@ public class PictureJam : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        levelController = LevelController.Instance;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log("check" + CheckPoint());
+        Debug.Log("check" + CheckPoint());
+        CheckPoint();
     }
 
     private bool CheckPoint()
@@ -31,8 +33,8 @@ public class PictureJam : MonoBehaviour
         if (childBlocks.Length != truePoints.Length)
             return false;
 
-        const float offset = 0.1f;
         if (isCheck) return false;
+        const float offset = 0.1f;
 
         for (int i = 0; i < childBlocks.Length; i++)
         {
@@ -48,6 +50,7 @@ public class PictureJam : MonoBehaviour
             }
         }
         isCheck = true;
+        levelController.Level.CheckWin(true);
         return true;
     }
 }
