@@ -72,7 +72,7 @@ public class Shop : MonoBehaviour
             }
             listSkinItems.Add(si);
         }
-        txtCoin.text = DataController.Instance.Data.Coin.ToString();
+        //txtCoin.text = DataController.Instance.Data.Coin.ToString();
         StartCoroutine(CoReposition());
     }
 
@@ -138,8 +138,8 @@ public class Shop : MonoBehaviour
 
     public void CollectCoin(int value)
     {
-        GameUIController.Instance.UpdateCoin(txtCoin, DataController.Instance == null ? 0 : DataController.Instance.Data.Coin, DataController.Instance.Data.Coin + value);
-        DataController.Instance.Data.Coin += value;
+        //GameUIController.Instance.UpdateCoin(txtCoin, DataController.Instance == null ? 0 : DataController.Instance.Data.Coin, DataController.Instance.Data.Coin + value);
+        //DataController.Instance.Data.Coin += value;
         DataController.Instance.SaveData();
         Refresh();
         GameUIController.Instance.UpdateShopNoti();

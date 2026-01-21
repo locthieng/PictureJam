@@ -87,8 +87,8 @@ public class UIDailyBonus : MonoBehaviour
         switch (currentDayData.Type)
         {
             case DailyBonusType.Coin:
-                GameUIController.Instance.UpdateCoin(txtCoin, DataController.Instance.Data.Coin, currentDayData.Value, 0.3f, ShowClaimNext);
-                DataController.Instance.Data.Coin += currentDayData.Value;
+                //GameUIController.Instance.UpdateCoin(txtCoin, DataController.Instance.Data.Coin, currentDayData.Value, 0.3f, ShowClaimNext);
+                //DataController.Instance.Data.Coin += currentDayData.Value;
                 break;
             case DailyBonusType.Skin:
                 StartCoroutine(CoClaimSkin());

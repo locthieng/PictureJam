@@ -7,7 +7,7 @@ using UnityEngine;
 public class GameData
 {
     public int ChestKey;
-    public int Coin;
+    //public int Coin;
     public int BestScore;
     public int LevelCycleCount;
     public int LevelIndex;

@@ -269,7 +269,8 @@ public class StageController : MonoBehaviour
 
     public void Next()
     {
-        DataController.Instance.Data.Coin += earning;
+        //DataController.Instance.Data.Coin += earning;
+        CoinSystem.Instance.AddCoin(earning);
         DataController.Instance.SaveData();
         if (DataController.Instance.Data.LevelIndex % 4 == 0 && !GlobalController.IsRated)
         {

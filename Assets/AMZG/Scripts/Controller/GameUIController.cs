@@ -33,6 +33,7 @@ public class GameUIController : MonoBehaviour
     [SerializeField] private CanvasGroup resultWin;
     [SerializeField] private CanvasGroup resultFail;
     [SerializeField] private ParticleSystem eVictory;
+    [SerializeField] private CoinEffect coinEffect;
 
     [SerializeField] private TMPro.TMP_Text levelCurrent;
 
@@ -269,7 +270,7 @@ public class GameUIController : MonoBehaviour
     {
         for (int i = 0; i < btnNoAds.Length; i++)
         {
-            btnNoAds[i].SetActive(!DataController.Instance.Stats.NoAds);
+            //btnNoAds[i].SetActive(!DataController.Instance.Stats.NoAds);
         }
     }
 }

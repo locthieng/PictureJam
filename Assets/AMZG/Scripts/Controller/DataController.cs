@@ -34,7 +34,7 @@ public class DataController : MonoBehaviour
                 BestScore = 0,
                 LevelIndex = 0,
                 Levels = new List<int>() { 1 },
-                Coin = 0,
+                //Coin = 0,
                 SkinID = 0,
                 SkinUnlockProgress = new List<int>(new int[AssetController.Instance.ListSkinSprites.Count]),
                 ChestKey = 0,

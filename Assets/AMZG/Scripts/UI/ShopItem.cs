@@ -51,8 +51,8 @@ public class ShopItem : MonoBehaviour
             txtUnlockAtLevel.gameObject.SetActive(Data.LevelLimit > DataController.Instance.Data.LevelIndex);
             txtUnlockAtLevel.text = "UNLOCK AT\n<size=60>Lv." + Data.LevelLimit + "</size>";
         }
-        btnPurchaseCanvasGroup.alpha = (realCost <= DataController.Instance.Data.Coin ? 1 : 0.25f);
-        btnPurchaseCanvasGroup.blocksRaycasts = realCost <= DataController.Instance.Data.Coin;
+       /* btnPurchaseCanvasGroup.alpha = (realCost <= DataController.Instance.Data.Coin ? 1 : 0.25f);
+        btnPurchaseCanvasGroup.blocksRaycasts = realCost <= DataController.Instance.Data.Coin;*/
     }
 
     public void OnSelect()
@@ -124,7 +124,7 @@ public class ShopItem : MonoBehaviour
     public void OnPurchase()
     {
         int realCost = Data.ValueInCoin > 0 ? (Data.UCTotal - Data.UCCurrent) * Data.ValueInCoin : Data.UCTotal;
-        if (realCost > DataController.Instance.Data.Coin)
+        if (realCost > /*DataController.Instance.Data.Coin */ CoinSystem.Instance.Coin)
         {
             shop.OnNotEnoughCoin();
         }
