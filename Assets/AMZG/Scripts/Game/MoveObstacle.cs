@@ -54,6 +54,7 @@ public class MoveObstacle : MonoBehaviour
 
     void OnMouseDown()
     {
+        if (Type == ObstacleType.Immoblie) return;
         isDragging = true;
         SetCollidersLayer(LayerMaskToLayer(moveBlockMask));
 
@@ -70,6 +71,8 @@ public class MoveObstacle : MonoBehaviour
 
     void OnMouseUp()
     {
+        if (Type == ObstacleType.Immoblie) return;
+
         isDragging = false;
 
         // Snap block vào lưới
@@ -108,6 +111,8 @@ public class MoveObstacle : MonoBehaviour
 
     void OnMouseDrag()
     {
+        if (Type == ObstacleType.Immoblie) return;
+
         Plane plane = new Plane(Vector3.up, Vector3.up * yHeight);
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 
@@ -133,12 +138,21 @@ public class MoveObstacle : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!isDragging) return;
+        if (!isDragging || Type == ObstacleType.Immoblie) return;
 
         Vector3 current = transform.position;
         Vector3 desired = targetPosition;
         Vector3 direction = desired - current;
         direction.y = 0f;
+
+        if (Type == ObstacleType.Horizontal)
+        {
+            direction.z = 0f; // Khóa trục Z, chỉ cho phép di chuyển X
+        }
+        else if (Type == ObstacleType.Vertical)
+        {
+            direction.x = 0f; // Khóa trục X, chỉ cho phép di chuyển Z
+        }
 
         float moveStep = moveSpeed * Time.fixedDeltaTime;
 
@@ -207,6 +221,15 @@ public class MoveObstacle : MonoBehaviour
         }
 
         return dir.normalized.x * move + dir.normalized.z * move;
+    }
+
+    public void ObstacleCanMove(bool isActive)
+    {
+        // false : cannot move, true : can move
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            colliders[i].gameObject.SetActive(isActive);
+        }
     }
 
     private void OnDrawGizmosSelected()

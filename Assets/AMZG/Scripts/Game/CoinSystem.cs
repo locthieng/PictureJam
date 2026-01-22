@@ -10,7 +10,11 @@ public class CoinSystem : MonoBehaviour
     private const string COIN_KEY = "PLAYER_COIN";
 
     private int _coin;
-    public int Coin => _coin;
+    public int Coin
+    {
+        get => _coin;
+        set => _coin = value;
+    }
 
     private void Awake()
     {

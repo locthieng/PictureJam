@@ -5,7 +5,7 @@ public class LifeSystem : MonoBehaviour
 {
     public static LifeSystem Instance { get; private set; }
 
-    public event Action<int> OnLifeChanged;
+    public Action<int> OnLifeChanged;
 
     private const string LIFE_KEY = "PLAYER_LIFE";
     private const string LIFE_TIME_KEY = "PLAYER_LIFE_TIME";
@@ -14,16 +14,16 @@ public class LifeSystem : MonoBehaviour
     private const string INFINITE_LIFE_EXPIRE_KEY = "PLAYER_INFINITE_LIFE_EXPIRE";
 
     // Biến lưu thời điểm hết hạn mạng vô hạn
-    private DateTime infiniteExpireTime;
+    public DateTime infiniteExpireTime;
 
     // Thuộc tính để kiểm tra xem hiện tại có đang vô hạn mạng không
     public bool IsInfinite => DateTime.Now < infiniteExpireTime;
 
     [SerializeField] private int maxLife = 5;
-    [SerializeField] private int refillSeconds = 300; // 5 phút
+    [SerializeField] public int refillSeconds = 900; //s
 
-    private int currentLife;
-    private DateTime lastLifeTime;
+    public int currentLife;
+    public DateTime lastLifeFillTime;
 
     public int CurrentLife => currentLife;
     public int MaxLife => maxLife;
@@ -45,15 +45,15 @@ public class LifeSystem : MonoBehaviour
 
     #region Load / Save
 
-    private void Load()
+    public void Load()
     {
         currentLife = PlayerPrefs.GetInt(LIFE_KEY, maxLife);
 
         string timeStr = PlayerPrefs.GetString(LIFE_TIME_KEY, string.Empty);
         if (!string.IsNullOrEmpty(timeStr))
-            lastLifeTime = DateTime.Parse(timeStr);
+            lastLifeFillTime = DateTime.Parse(timeStr);
         else
-            lastLifeTime = DateTime.Now;
+            lastLifeFillTime = DateTime.Now;
 
         string expireTimeStr = PlayerPrefs.GetString(INFINITE_LIFE_EXPIRE_KEY, string.Empty);
         if (!string.IsNullOrEmpty(expireTimeStr))
@@ -64,10 +64,10 @@ public class LifeSystem : MonoBehaviour
         Notify();
     }
 
-    private void Save()
+    public void Save()
     {
         PlayerPrefs.SetInt(LIFE_KEY, currentLife);
-        PlayerPrefs.SetString(LIFE_TIME_KEY, lastLifeTime.ToString());
+        PlayerPrefs.SetString(LIFE_TIME_KEY, lastLifeFillTime.ToString());
         PlayerPrefs.SetString(INFINITE_LIFE_EXPIRE_KEY, infiniteExpireTime.ToString());
         PlayerPrefs.Save();
     }
@@ -81,14 +81,19 @@ public class LifeSystem : MonoBehaviour
     /// </summary>
     public bool ConsumeLife(int amount = 1)
     {
-        if (IsInfinite) return true; // Đang vô hạn thì không trừ mạng, cho đi tiếp luôn!
-        if (currentLife < amount)
-            return false;
+        if (IsInfinite)
+        {
+            return true;
+        }// Đang vô hạn thì không trừ mạng, cho đi tiếp luôn!
+        if (currentLife < amount) return false;
 
+        bool wasFull = currentLife == maxLife;
         currentLife -= amount;
 
-        if (currentLife < maxLife)
-            lastLifeTime = DateTime.Now;
+        if (wasFull && currentLife < maxLife)
+        {
+            lastLifeFillTime = DateTime.Now;
+        }
 
         Save();
         Notify();
@@ -98,15 +103,24 @@ public class LifeSystem : MonoBehaviour
     /// <summary>
     /// C?ng life (t? timer / ads / reward)
     /// </summary>
-    public void AddLife(int amount = 1)
+    public void AddLife(int amount = 1, Action callbackInfinite = null, Action callback = null)
     {
         int before = currentLife;
         currentLife = Mathf.Min(currentLife + amount, maxLife);
 
+        if (currentLife < maxLife)
+        {
+            callback?.Invoke();
+        }
+        else
+        {
+            callbackInfinite?.Invoke();
+        }
+
         if (before < maxLife && currentLife >= maxLife)
         {
             // full ? reset time
-            lastLifeTime = DateTime.Now;
+            lastLifeFillTime = DateTime.Now;
         }
 
         Save();
@@ -122,7 +136,7 @@ public class LifeSystem : MonoBehaviour
         if (IsFull)
             return TimeSpan.Zero;
 
-        TimeSpan passed = DateTime.Now - lastLifeTime;
+        TimeSpan passed = DateTime.Now - lastLifeFillTime;
         double remain = refillSeconds - passed.TotalSeconds;
         return TimeSpan.FromSeconds(Mathf.Max(0, (float)remain));
     }
@@ -148,5 +162,20 @@ public class LifeSystem : MonoBehaviour
         }
         Save();
         Notify(); // Thông báo cho UI cập nhật (hiện icon vô cực)
+    }
+
+    public void CheckLifeFrozenStatus()
+    {
+        // Nếu hiện tại KHÔNG CÒN vô hạn nữa (hết giờ)
+        if (DateTime.Now >= infiniteExpireTime)
+        {
+            // Nếu trước đó vẫn còn lưu thời gian (nghĩa là vừa mới hết xong)
+            if (infiniteExpireTime != DateTime.MinValue)
+            {
+                infiniteExpireTime = DateTime.MinValue; // Reset về mặc định
+                Save();     // Lưu lại trạng thái đã hết vô hạn
+                Notify();   // Báo cho UI ẩn icon vô cực đi
+            }
+        }
     }
 }

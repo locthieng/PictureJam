@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using System.Collections.Generic;
 
 [CustomEditor(typeof(BoardController))]
 public class BoardControllerEditor : Editor
@@ -24,6 +25,7 @@ public class BoardControllerEditor : Editor
     private void OnSceneGUI(SceneView sceneView)
     {
         if (board == null || !board.EnableSnapInEditor) return;
+        if (Application.isPlaying) return;
 
         foreach (MoveBlock t in board.MoveBlocks)
         {
@@ -60,7 +62,7 @@ public class BoardControllerEditor : Editor
                 }
             }
         }
-            
+
     }
 
     public override void OnInspectorGUI()
@@ -86,11 +88,11 @@ public class BoardControllerEditor : Editor
                 Undo.RecordObject(t.transform, "Snap MoveBlock to Grid");
                 t.transform.position = board.GetSnappedPosition(t.transform.position);
             }
-            
+
             foreach (MoveObstacle t in board.MoveObstacles)
             {
                 if (t == null) continue;
-                Undo.RecordObject(t.transform, "Snap MoveBlock to Grid");
+                Undo.RecordObject(t.transform, "Snap MoveObstacles to Grid");
                 t.transform.position = board.GetSnappedPosition(t.transform.position);
             }
         }
@@ -110,5 +112,6 @@ public class BoardControllerEditor : Editor
         serializedObject.ApplyModifiedProperties();
         EditorUtility.SetDirty(board);
     }
+
 }
 #endif

@@ -50,6 +50,10 @@ public class UISettings : MonoBehaviour
         if (StageController.Instance.IsOver) return;
         canvas.alpha = 1;
         canvas.blocksRaycasts = true;
+        if (GlobalController.CurrentStage == StageScreen.InGame)
+        {
+            GameUIController.Instance.SetClock(false);
+        }
         tgSound.IsOn = GlobalController.IsSoundOn;
         tgBgm.IsOn = GlobalController.IsBgmOn;
         tgHaptic.IsOn = GlobalController.IsHapticOn;
@@ -61,6 +65,10 @@ public class UISettings : MonoBehaviour
     {
         canvas.alpha = 0;
         canvas.blocksRaycasts = false;
+        if (GlobalController.CurrentStage == StageScreen.InGame)
+        {
+            GameUIController.Instance.SetClock(true);
+        }    
         GlobalController.Instance.ShowBanner();
     }
 }

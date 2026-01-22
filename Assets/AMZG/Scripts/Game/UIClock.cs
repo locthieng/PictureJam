@@ -5,7 +5,7 @@ using UnityEngine;
 public class UIClock : MonoBehaviour
 {
     [SerializeField] private TMP_Text timeText;
-    [SerializeField] private float countdownTime = 360f;
+    [SerializeField] private float countdownTime = 600f;
 
     private float currentTime;
     public bool isRunning = false;

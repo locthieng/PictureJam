@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteAlways]
 public class BoardController : MonoBehaviour
 {
     public static BoardController Instance { get; private set; }
@@ -47,6 +48,8 @@ public class BoardController : MonoBehaviour
 
     private void InitBoard()
     {
+        if (!Application.isPlaying) return;
+
         shadowTiles = new GameObject[width, height];
 
         for (int x = 0; x < width; x++)
@@ -193,4 +196,31 @@ public class BoardController : MonoBehaviour
         }
 #endif
     }
+#if UNITY_EDITOR
+
+    private void Update()
+    {
+        // Kiểm tra nếu đang trong Editor và không phải đang Play
+        if (!Application.isPlaying && enableSnapInEditor)
+        {
+            SnapBlocksInEditor();
+        }
+    }
+
+    private void SnapBlocksInEditor()
+    {
+        // Duyệt qua danh sách các MoveBlock mà em đã lưu
+        if (moveBlocks == null) return;
+
+        foreach (var block in moveBlocks)
+        {
+            if (block != null)
+            {
+                // Sử dụng hàm GetSnappedPosition em đã viết rất tốt ở dưới
+                block.transform.position = GetSnappedPosition(block.transform.position);
+            }
+        }
+    }
+#endif
+
 }

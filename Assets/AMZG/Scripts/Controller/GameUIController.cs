@@ -28,6 +28,9 @@ public class GameUIController : MonoBehaviour
     [SerializeField] private TMPro.TextMeshProUGUI txtCoin;
     [SerializeField] private CanvasGroup inGameUI;
     [SerializeField] private UIDailyBonus uiDailyBonus;
+    [SerializeField] public UIClock uiClock;
+    [SerializeField] public UILife uiLife;
+
     [Header("End UI")]
     [SerializeField] private Image resultCover;
     [SerializeField] private CanvasGroup resultWin;
@@ -114,6 +117,7 @@ public class GameUIController : MonoBehaviour
     {
         SwitchStageUI();
         levelCurrent.text = "Level " + level.ToString();
+        SetClock(true);
     }
 
     public void UpdateCoin(TMPro.TextMeshProUGUI txtCoin, int previousValue, int value, float duration = 1f, Action callback = null)
@@ -170,6 +174,11 @@ public class GameUIController : MonoBehaviour
         }
     }
 
+    public void SetClock(bool isActive)
+    {
+        uiClock.ShowClock(isActive);
+    }
+
     public void ToggleSound(bool isOn)
     {
         GlobalController.IsSoundOn = !GlobalController.IsSoundOn;
@@ -223,7 +232,7 @@ public class GameUIController : MonoBehaviour
     public void ShowGameEnd(bool win)
     {
         //LeanTween.alpha(resultCover.rectTransform, 0.5f, 0.2f);
-        LeanTween.scale(resultCover.gameObject, Vector3.one * 1, 0.4f);
+        //LeanTween.scale(resultCover.gameObject, Vector3.one * 1, 0.4f);
         inGameUI.blocksRaycasts = false;
         LeanTween.alphaCanvas(inGameUI, 0, 0.1f);
         if (win)

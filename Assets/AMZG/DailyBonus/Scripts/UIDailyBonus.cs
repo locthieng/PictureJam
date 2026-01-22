@@ -64,7 +64,7 @@ public class UIDailyBonus : MonoBehaviour
             LeanTween.scale(content, Vector3.one, 0.2f);
             SetRewardData();
         }
-        StartCoroutine(CoReposition());
+        //StartCoroutine(CoReposition());
     }
 
     private void SetRewardData()

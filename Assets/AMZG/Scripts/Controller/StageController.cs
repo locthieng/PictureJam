@@ -147,6 +147,7 @@ public class StageController : MonoBehaviour
     public void GetBackHome()
     {
         GlobalController.CurrentStage = StageScreen.Home;
+        LifeSystem.Instance.ConsumeLife();
         ReloadScene();
         if (showingInter)
         {

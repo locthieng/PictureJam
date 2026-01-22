@@ -1,5 +1,7 @@
 using TMPro.Examples;
+using UnityEditor;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public enum BlockType
 {
@@ -25,7 +27,7 @@ public class MoveBlock : MonoBehaviour
     private bool isDragging = false;
     private Bounds combinedBounds;
     private Vector3 dragOffset;
-    Collider[] colliders;
+    public Collider[] colliders;
     BoardController board => BoardController.Instance;
 
     public int SizeX { get; private set; }
@@ -210,6 +212,15 @@ public class MoveBlock : MonoBehaviour
 
         return dir.normalized.x * move + dir.normalized.z * move;
     }
+
+    public void BlockCanMove(bool isActive)
+    {
+        // false : cannot move, true : can move
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            colliders[i].gameObject.SetActive(isActive);
+        }
+    }    
 
     private void OnDrawGizmosSelected()
     {
