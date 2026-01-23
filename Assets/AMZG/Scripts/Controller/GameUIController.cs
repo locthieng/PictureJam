@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NUnit.Framework.Interfaces;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,6 +31,11 @@ public class GameUIController : MonoBehaviour
     [SerializeField] private UIDailyBonus uiDailyBonus;
     [SerializeField] public UIClock uiClock;
     [SerializeField] public UILife uiLife;
+    [SerializeField] public UILevelHardWarning uiLevelHardWarning;
+    [SerializeField] private NewBoosterPopUp newBoosterPopUp;
+    [SerializeField] private NewBlockPopUp newBlockPopUp;
+    [SerializeField] public BoosterItem[] items;
+    [SerializeField] public UIButton[] boosterItems;
 
     [Header("End UI")]
     [SerializeField] private Image resultCover;
@@ -44,6 +50,7 @@ public class GameUIController : MonoBehaviour
     [SerializeField] private CanvasGroup settingUI;
 
     private bool isUION;
+    private bool isClockStarted = false;
 
     public static bool IsUIMatchWidth
     {
@@ -117,7 +124,34 @@ public class GameUIController : MonoBehaviour
     {
         SwitchStageUI();
         levelCurrent.text = "Level " + level.ToString();
-        SetClock(true);
+        //SetClock(true);
+        //SetUp();
+    }
+
+    public void SetUp()
+    {
+        // new booster
+        for (int i = 0; i < items.Length; i++)
+        {
+            BoosterItemData itemData = BoosterController.Instance.boostersData[(int)items[i].boosterType];
+            if (itemData.UnlockLevel == DataController.Instance.Data.LevelIndex)
+            {
+                ShowBoosterItemUnlockPopup(itemData);
+                SetUpTutorialUnlockItem(items[i], itemData.tutorialText);
+                break;
+            }
+        }
+
+        // new block
+        for (int i = 0; i < BlockController.Instance.blockDatas.Length; i++)
+        {
+            BlockData blockData = BlockController.Instance.blockDatas[i];
+            if (blockData.UnlockLevel == DataController.Instance.Data.LevelIndex)
+            {
+                ShowBlockUnlockPopup(blockData);
+                break;
+            }
+        }
     }
 
     public void UpdateCoin(TMPro.TextMeshProUGUI txtCoin, int previousValue, int value, float duration = 1f, Action callback = null)
@@ -177,6 +211,14 @@ public class GameUIController : MonoBehaviour
     public void SetClock(bool isActive)
     {
         uiClock.ShowClock(isActive);
+    }
+
+    public void StartClock()
+    {
+        if (isClockStarted) return;
+
+        isClockStarted = true;
+        SetClock(true);
     }
 
     public void ToggleSound(bool isOn)
@@ -249,6 +291,40 @@ public class GameUIController : MonoBehaviour
                 resultFail.blocksRaycasts = true;
             });
         }
+    }
+
+    public void ShowLevelHardWarning()
+    {
+        uiLevelHardWarning.ShowWarningLevelHard();
+    }
+
+    public void SetInteractBoosterUI(bool isActive)
+    {
+        for (int i = 0; i < boosterItems.Length; i++)
+        {
+            boosterItems[i].enabled = isActive;
+        }
+    }
+
+    public void ShowBoosterItemUnlockPopup(BoosterItemData data, string title = null, string content = null)
+    {
+        newBoosterPopUp.SetUp(data, title, content);
+        newBoosterPopUp.Show();
+    }
+    
+    public void ShowBlockUnlockPopup(BlockData data, string title = null, string content = null)
+    {
+        newBlockPopUp.SetUp(data, title, content);
+        newBlockPopUp.Show();
+    }
+
+    public void SetUpTutorialUnlockItem(BoosterItem item, string text)
+    {
+        /*tutorialItem.SetUp(item.boosterType);
+        tutorialItem.transform.position = item.transform.position;
+        tutorialUnlockItemText.text = text;
+        tapHand.transform.position = item.transform.position;*/
+
     }
 
     public LevelSelectorUI levelSelectorUI;

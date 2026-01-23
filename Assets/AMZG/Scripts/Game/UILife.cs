@@ -53,7 +53,6 @@ public class UILife : MonoBehaviour
                         }
                         remainLifeRefillTime = lifeRefillProgressTime - lifeSystem.refillSeconds * refilledLives;
                         lifeSystem.lastLifeFillTime = DateTime.Now.AddSeconds(-remainLifeRefillTime);
-                        //GlobalController.Instance.OnLifeChange(refilledLives);
                         lifeSystem.AddLife(refilledLives);
 
                     }

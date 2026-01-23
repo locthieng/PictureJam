@@ -115,22 +115,34 @@ public class BoosterItem : MonoBehaviour
         }
         switch (boosterType)
         {
-            case BoosterType.AddSlot:
+            case BoosterType.Clock:
+                {
+                    Debug.Log("clock");
+                    // Kiểm tra điều kiện sử dụng booster
+                    break;
+                }
+            case BoosterType.Hammer:
+                {
+
+                    break;
+                }
+            case BoosterType.IceClock:
+                {
+                    Debug.Log("IceClock");
+                    // Kiểm tra điều kiện sử dụng booster
+                    break;
+                }
+            case BoosterType.Scissors:
                 {
                     // Kiểm tra điều kiện sử dụng booster
                     break;
                 }
             case BoosterType.Magnet:
                 {
-
-                    break;
-                }
-            case BoosterType.Hammer:
-                {
                     // Kiểm tra điều kiện sử dụng booster
                     break;
                 }
-            case BoosterType.ChangeOrder:
+            case BoosterType.Glove:
                 {
                     // Kiểm tra điều kiện sử dụng booster
                     break;

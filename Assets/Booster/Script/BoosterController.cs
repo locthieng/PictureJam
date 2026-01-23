@@ -3,10 +3,12 @@ using UnityEngine;
 
 public enum BoosterType
 {
-    AddSlot = 10,
-    Magnet = 20,
-    ChangeOrder = 30,
-    Hammer = 40
+    Clock = 10,
+    Hammer = 20,
+    IceClock = 30,
+    Scissors = 40,
+    Magnet = 50,
+    Glove = 60
 }
 
 [Serializable]
@@ -70,22 +72,28 @@ public class BoosterController : MonoBehaviour
         TotalBoostersUsedInLevel++;
 
         // Chặn tương tác với UI booster
-        //GameUIController.Instance.SetInteractBoosterUI(false);
+        GameUIController.Instance.SetInteractBoosterUI(false);
 
         switch (booster)
         {
-            case BoosterType.Magnet:
-                //Gọi hàm xử lý
-                break;
-            case BoosterType.AddSlot:
+            case BoosterType.Clock:
                 //Gọi hàm xử lý
                 break;
             case BoosterType.Hammer:
+                //Gọi hàm xử lý
+                break;
+            case BoosterType.IceClock:
                 usingHammer = true;
                 //GameUIController.Instance.SetTextForBoosterHammer(true);
                 //GameUIController.Instance.SetAlphaBoosterUI(false);
                 break;
-            case BoosterType.ChangeOrder:
+            case BoosterType.Scissors:
+                //Gọi hàm xử lý
+                break;
+            case BoosterType.Magnet:
+                //Gọi hàm xử lý
+                break;
+            case BoosterType.Glove:
                 //Gọi hàm xử lý
                 break;
             default:

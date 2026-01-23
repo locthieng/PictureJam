@@ -7,40 +7,46 @@ using UnityEngine.UI;
 
 public class PopUp : MonoBehaviour
 {
-    [SerializeField]
-    private Image bg;
-    [SerializeField]
-    private CanvasGroup content;
-    [SerializeField]
-    private Text txtContent;
-    [SerializeField]
-    private UIButton callButton;
-    [SerializeField]
-    private UIButton yesButton;
-    [SerializeField]
-    private UnityEvent onShown;
+    [SerializeField] private Image bg;
+    [SerializeField] private CanvasGroup content;
+    [SerializeField] protected Image contentImage;
+    [SerializeField] protected TMPro.TextMeshProUGUI txtTitle;
+    [SerializeField] protected TMPro.TextMeshProUGUI txtContent;
+    [SerializeField] private UnityEvent onShown;
     protected Action onYesCallback;
+    protected Action onHidden;
+    protected Action onShow;
+
+    protected string location = "home_icon";
+    protected string showType = "pack";
+    protected string productId;
+
+    public void SetLocationForLogEvent(string location)
+    {
+        this.location = location;
+    }
 
     public virtual void Show()
     {
-        if (callButton != null)
-        {
-            callButton.enabled = false;
-        }
         bg.gameObject.SetActive(true);
-        bg.color = new Color(0, 0, 0, 0.8f);
+        bg.color = new Color(0, 0, 0, 0.9f);
         content.blocksRaycasts = true;
         content.transform.localScale = Vector3.one / 1.1f;
         if (onShown != null)
         {
             onShown.Invoke();
         }
-        LeanTween.scale(content.gameObject, Vector3.one, 0.1f).setEase(LeanTweenType.easeOutQuad).setOnComplete(() =>
+        onShow?.Invoke();
+        LeanTween.scale(content.gameObject, Vector3.one, 0.2f).setEase(LeanTweenType.easeOutQuad).setOnComplete(() =>
         {
         }).setIgnoreTimeScale(true);
-        LeanTween.alphaCanvas(content, 1, 0.05f).setIgnoreTimeScale(true);
+        LeanTween.alphaCanvas(content, 1, 0.1f).setIgnoreTimeScale(true);
         //transform.SetAsLastSibling();
-        GlobalController.Instance.HideBanner();
+        //GlobalController.Instance.HideBanner();
+    }
+    public void SetOnHidden(Action onHidden)
+    {
+        this.onHidden = onHidden;
     }
 
     public void SetContent(string content)
@@ -56,11 +62,9 @@ public class PopUp : MonoBehaviour
         LeanTween.alphaCanvas(content, 0, 0.1f).setOnComplete(() =>
         {
             bg.gameObject.SetActive(false);
-            if (callButton != null)
-            {
-                callButton.enabled = true;
-            }
-            GlobalController.Instance.ShowBanner();
+            //GlobalController.Instance.ShowBanner();
+            onHidden?.Invoke();
+            onHidden = null;
         }).setIgnoreTimeScale(true);
     }
 

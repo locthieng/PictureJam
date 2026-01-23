@@ -3,16 +3,6 @@ using UnityEditor;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public enum BlockType
-{
-    Normal,
-    Horizontal,
-    Vertical,
-    Ice,
-    Glued,
-    Nailed
-}
-
 public class MoveBlock : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 10f;
@@ -58,6 +48,8 @@ public class MoveBlock : MonoBehaviour
 
     void OnMouseDown()
     {
+        GameUIController.Instance?.StartClock();
+
         isDragging = true;
         SetCollidersLayer(LayerMaskToLayer(moveBlockMask));
 

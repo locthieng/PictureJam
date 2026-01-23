@@ -131,10 +131,12 @@ public class BoosterDataController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A))
         {
             // Code test gọn gàng
+            Data.AddBooster(BoosterType.Clock, 1);
             Data.AddBooster(BoosterType.Hammer, 1);
+            Data.AddBooster(BoosterType.IceClock, 1);
+            Data.AddBooster(BoosterType.Scissors, 1);
             Data.AddBooster(BoosterType.Magnet, 1);
-            Data.AddBooster(BoosterType.AddSlot, 1);
-            Data.AddBooster(BoosterType.ChangeOrder, 1);
+            Data.AddBooster(BoosterType.Glove, 1);
             SaveData();
         }
 

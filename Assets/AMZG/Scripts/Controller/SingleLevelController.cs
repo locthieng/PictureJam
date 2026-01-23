@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,9 +18,14 @@ public class SingleLevelController : MonoBehaviour
     [SerializeField] public List<MoveBlock> moveBlocks = new List<MoveBlock>();
 
     [SerializeField] public int targetPicture;
+    public bool IsHard;
 
     public virtual void SetUp()
     {
+        if (IsHard)
+        {
+            GameUIController.Instance.ShowLevelHardWarning();
+        }
     }
 
     public virtual void StartLevel()
