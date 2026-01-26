@@ -8,7 +8,7 @@ public class MoveBlock : MonoBehaviour
     [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private LayerMask obstacleMask;
     [SerializeField] private LayerMask moveBlockMask;
-    [SerializeField] private BlockType Type;
+    [SerializeField] public BlockType Type;
 
     private Rigidbody rb;
     private Camera cam;
@@ -20,6 +20,9 @@ public class MoveBlock : MonoBehaviour
     public Collider[] colliders;
     BoardController board => BoardController.Instance;
 
+    [SerializeField] public int numIceBlock;
+
+    public BlockParent Parent { get; set; }
     public int SizeX { get; private set; }
     public int SizeZ { get; private set; }
 
@@ -32,7 +35,6 @@ public class MoveBlock : MonoBehaviour
         yHeight = transform.position.y;
         colliders = GetComponentsInChildren<Collider>();
         combinedBounds = GetCombinedBounds();
-
         CalculateSizes();
     }
 
@@ -48,6 +50,11 @@ public class MoveBlock : MonoBehaviour
 
     void OnMouseDown()
     {
+        if (Parent != null)
+        {
+            Parent.OnChildMouseDown(); // Gọi sang cha
+            return;
+        }
         GameUIController.Instance?.StartClock();
 
         isDragging = true;
@@ -66,6 +73,11 @@ public class MoveBlock : MonoBehaviour
 
     void OnMouseUp()
     {
+        if (Parent != null)
+        {
+            Parent.OnChildMouseUp(); // Gọi sang cha
+            return;
+        }
         isDragging = false;
 
         // Snap block vào lưới
@@ -104,6 +116,12 @@ public class MoveBlock : MonoBehaviour
 
     void OnMouseDrag()
     {
+        if (Parent != null)
+        {
+            Parent.OnChildMouseDrag(); // Gọi sang cha
+            return;
+        }
+
         Plane plane = new Plane(Vector3.up, Vector3.up * yHeight);
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 
@@ -213,6 +231,14 @@ public class MoveBlock : MonoBehaviour
             colliders[i].gameObject.SetActive(isActive);
         }
     }    
+
+    public void UnlockIceBlock()
+    {
+        if (numIceBlock == 0)
+        {
+            //move normal
+        }
+    }
 
     private void OnDrawGizmosSelected()
     {
