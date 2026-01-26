@@ -34,7 +34,7 @@ public class UIRevive : MonoBehaviour
         {
             canvas.blocksRaycasts = false;
         });
-        //StageController.Instance.AfterClose(false);
+        StageController.Instance.AfterClose(false);
     }
 
    

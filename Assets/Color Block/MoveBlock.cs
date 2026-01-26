@@ -1,4 +1,5 @@
 using TMPro.Examples;
+using Unity.Jobs;
 using UnityEditor;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
@@ -22,7 +23,8 @@ public class MoveBlock : MonoBehaviour
 
     [SerializeField] public int numIceBlock;
 
-    public BlockParent Parent { get; set; }
+    public MoveBlock Child;
+    public MoveBlock Parent;
     public int SizeX { get; private set; }
     public int SizeZ { get; private set; }
 
@@ -36,6 +38,14 @@ public class MoveBlock : MonoBehaviour
         colliders = GetComponentsInChildren<Collider>();
         combinedBounds = GetCombinedBounds();
         CalculateSizes();
+        if (Child != null)
+        {
+            Child.transform.SetParent(transform);
+            Child.Parent = this;
+            colliders = GetComponentsInChildren<Collider>();
+            combinedBounds = GetCombinedBounds();
+        } 
+            
     }
 
     private void CalculateSizes()
@@ -50,6 +60,12 @@ public class MoveBlock : MonoBehaviour
 
     void OnMouseDown()
     {
+        if (Parent != null)
+        {
+            Parent.OnMouseDown();
+            return;
+        }
+        Debug.Log(name);
         GameUIController.Instance?.StartClock();
 
         isDragging = true;
@@ -68,6 +84,12 @@ public class MoveBlock : MonoBehaviour
 
     void OnMouseUp()
     {
+        if (Parent != null)
+        {
+            Parent.OnMouseUp();
+            return;
+        }
+
         isDragging = false;
 
         // Snap block vào lưới
@@ -102,10 +124,53 @@ public class MoveBlock : MonoBehaviour
         return 0;
     }
 
+    public void TypeCanMove(BlockType blockType, Vector3 nextPosition)
+    {
+        switch (blockType)
+        {
+            case BlockType.Normal:
+                break;
+
+            case BlockType.Horizontal:
+                nextPosition.x = 0;
+                break;
+
+            case BlockType.Vertical:
+                nextPosition.z = 0;
+                break;
+
+            case BlockType.Ice:
+                if (numIceBlock > 0)
+                {
+                    nextPosition.x = 0;
+                    nextPosition.z = 0;
+                }
+                break;
+            
+            case BlockType.Glued:
+                break;
+            
+            case BlockType.Nailed:
+                nextPosition.x = 0;
+                nextPosition.z = 0;
+                break;
+
+            default:
+                break;
+        }
+    }    
+
 
 
     void OnMouseDrag()
     {
+        if (Parent != null)
+        {
+            Parent.OnMouseDrag();
+            return;
+        } 
+            
+
         Plane plane = new Plane(Vector3.up, Vector3.up * yHeight);
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 
@@ -150,7 +215,6 @@ public class MoveBlock : MonoBehaviour
         float moveZ = ComputeAxisMovement(Vector3.forward * Mathf.Sign(direction.z), Mathf.Abs(direction.z), moveStep);
         nextPosition.z += moveZ;
 
-        
         // ✅ Kiểm tra tổng thể sau khi tính cả X & Z
         Vector3 moveDelta = nextPosition - current;
         if (moveDelta != Vector3.zero)
@@ -186,6 +250,8 @@ public class MoveBlock : MonoBehaviour
 
 
         nextPosition.y = yHeight;
+        TypeCanMove(Type, nextPosition);
+
         rb.MovePosition(nextPosition);
 
     }

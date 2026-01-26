@@ -29,7 +29,11 @@ public class UIClock : MonoBehaviour
         else
         {
             isRunning = false;
-            StageController.Instance.End(false);
+            if (LevelController.Instance.Level.targetPicture > 0) StageController.Instance.End(false);
+            else
+            { 
+                StageController.Instance.End(true);
+            }
         }
     }
 

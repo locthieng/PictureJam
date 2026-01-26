@@ -3,22 +3,19 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 public class PictureJam : MonoBehaviour
 {
     [SerializeField] private bool isParent;
     [SerializeField] private Transform[] truePoints;
     [SerializeField] private MoveBlock[] childBlocks;
     private LevelController levelController;
-
+    private MoveBlock mb;
     public bool isCheck = false;
     // Start is called before the first frame update
     void Start()
     {
         levelController = LevelController.Instance;
+        mb = GetComponent<MoveBlock>();
     }
 
     // Update is called once per frame
@@ -55,9 +52,12 @@ public class PictureJam : MonoBehaviour
             }
         }
         isCheck = true;
+        levelController.Level.UnlockIceBlock();
         levelController.Level.CheckWin(true);
+        
         return true;
     }
+
 }
 
 

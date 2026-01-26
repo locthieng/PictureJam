@@ -31,6 +31,7 @@ public class GameUIController : MonoBehaviour
     [SerializeField] private UIDailyBonus uiDailyBonus;
     [SerializeField] public UIClock uiClock;
     [SerializeField] public UILife uiLife;
+    [SerializeField] public UIRevive uiRevive;
     [SerializeField] public UILevelHardWarning uiLevelHardWarning;
     [SerializeField] private NewBoosterPopUp newBoosterPopUp;
     [SerializeField] private NewBlockPopUp newBlockPopUp;
@@ -316,6 +317,14 @@ public class GameUIController : MonoBehaviour
     {
         newBlockPopUp.SetUp(data, title, content);
         newBlockPopUp.Show();
+    }
+
+    public void ShowReviveUI(bool show)
+    {
+        if (show)
+            uiRevive.Show();
+        else
+            uiRevive.Close();
     }
 
     public void SetUpTutorialUnlockItem(BoosterItem item, string text)

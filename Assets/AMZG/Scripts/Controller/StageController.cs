@@ -168,8 +168,20 @@ public class StageController : MonoBehaviour
     public void End(bool win)
     {
         if (IsOver) return;
-        IsOver = true;
-        StartCoroutine(CoEnd(win));
+        HapticController.TriggerHaptic(win ? HapticType.Success : HapticType.Failure);
+        LevelController.Instance.Level.BlockCanMove(false);
+
+        if (win)
+        {
+            StartCoroutine(CoEnd(win));
+        }
+        else
+        {
+            GameUIController.Instance.ShowReviveUI(true);
+            IsOver = false;
+        }
+        /*IsOver = true;
+        StartCoroutine(CoEnd(win));*/
     }
 
     IEnumerator CoEnd(bool win)
@@ -195,6 +207,12 @@ public class StageController : MonoBehaviour
             //AnalyticsController.Instance.LogLevelFail(GlobalController.CurrentLevelIndex, (int)(Time.realtimeSinceStartup - playTimeInSeconds), GlobalController.ReplayCount);
             StartCoroutine(CoShowEndGameUI(false));
         }
+    }
+
+    public void AfterClose(bool win)
+    {
+        LevelController.Instance.Level.BlockCanMove(true);
+        StartCoroutine(CoEnd(win));
     }
 
     int earning;
