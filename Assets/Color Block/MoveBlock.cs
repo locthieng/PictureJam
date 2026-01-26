@@ -50,11 +50,6 @@ public class MoveBlock : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (Parent != null)
-        {
-            Parent.OnChildMouseDown(); // Gọi sang cha
-            return;
-        }
         GameUIController.Instance?.StartClock();
 
         isDragging = true;
@@ -73,11 +68,6 @@ public class MoveBlock : MonoBehaviour
 
     void OnMouseUp()
     {
-        if (Parent != null)
-        {
-            Parent.OnChildMouseUp(); // Gọi sang cha
-            return;
-        }
         isDragging = false;
 
         // Snap block vào lưới
@@ -116,12 +106,6 @@ public class MoveBlock : MonoBehaviour
 
     void OnMouseDrag()
     {
-        if (Parent != null)
-        {
-            Parent.OnChildMouseDrag(); // Gọi sang cha
-            return;
-        }
-
         Plane plane = new Plane(Vector3.up, Vector3.up * yHeight);
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 
