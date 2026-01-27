@@ -22,7 +22,7 @@ public class StageController : MonoBehaviour
     private int mapIndex;
     private int numGoalsDone;
     private int numTotalGoals;
-
+    public bool isBonusTime;
     public bool IsWaitingForSkinOptions;
     public static bool IsStart { get; set; }
     private const string PlayerEnteredKey = "PlayerEntered";
@@ -124,10 +124,26 @@ public class StageController : MonoBehaviour
 
     public void StartGame()
     {
+        GameUIController.Instance.ShowPreItemPopUp(false);
+
         IsStart = true;
         GlobalController.CurrentStage = StageScreen.InGame;
         GameUIController.Instance.ShowLevelBreak(StartLevel);
     }
+
+    private int levelUnlockPreBooster = 1;
+
+    public void PrepareToStartGame()
+    {
+        if (GlobalController.CurrentLevelIndex > levelUnlockPreBooster)
+        {
+            GameUIController.Instance.ShowPreItemPopUp(true);
+        }   
+        else
+        {
+            StartGame();
+        }    
+    }    
 
     public void GetBackToLevelSelector()
     {
@@ -153,6 +169,19 @@ public class StageController : MonoBehaviour
         {
             GlobalController.Instance.ShowInterstitial();
         }
+    }
+
+    public void ButtonTryAgain()
+    {
+        if (LifeSystem.Instance.currentLife == 0)
+        {
+            //pop up mua life
+            GetBackHome();
+        }
+        else
+        {
+            Restart();
+        }    
     }
 
     public void UpdateScore()
@@ -188,7 +217,7 @@ public class StageController : MonoBehaviour
     {
         if (win)
         {
-            //yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(2f);
             if (!DataController.Instance.Data.Levels.Contains(GlobalController.CurrentLevelIndex) || GlobalController.CurrentLevelIndex == 1)
             {
                 DataController.Instance.Data.Levels.Add(GlobalController.CurrentLevelIndex);
@@ -211,11 +240,20 @@ public class StageController : MonoBehaviour
 
     public void AfterClose(bool win)
     {
-        LevelController.Instance.Level.BlockCanMove(true);
+        //LevelController.Instance.Level.BlockCanMove(true);
         StartCoroutine(CoEnd(win));
     }
 
-    int earning;
+    public void UseCoinToContinue()
+    {
+        Debug.Log("UseCoinToContinue");
+        LevelController.Instance.Level.BlockCanMove(true);
+        GameUIController.Instance.ShowReviveUI(false);
+        float bonusTime = 30f;
+        GameUIController.Instance.BonusTime(bonusTime);
+    }
+
+    int earning = 40;
     int earningX;
     public bool showingInter { get; set; }
 
@@ -290,15 +328,19 @@ public class StageController : MonoBehaviour
     {
         //DataController.Instance.Data.Coin += earning;
         CoinSystem.Instance.AddCoin(earning);
+        UICoin.Instance.ShowFlyingClaim(earning, () =>
+        {
+            UICoin.Instance.UpdateCoin(null, earning, 0.4f, NextLevel);
+        });
         DataController.Instance.SaveData();
-        if (DataController.Instance.Data.LevelIndex % 4 == 0 && !GlobalController.IsRated)
+        /*if (DataController.Instance.Data.LevelIndex % 4 == 0 && !GlobalController.IsRated)
         {
             GameUIController.Instance.ShowRateUs(NextLevel, NextLevelAfterRate);
-        }
-        else
-        {
-            NextLevel();
-        }
+        }*/
+        //else
+        //{
+            //NextLevel();
+        //}
     }
 
     private void NextLevelAfterRate()

@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class PictureJam : MonoBehaviour
+public class CompleteTarget : MonoBehaviour
 {
     [SerializeField] private bool isParent;
     [SerializeField] private Transform[] truePoints;
     [SerializeField] private MoveBlock[] childBlocks;
     private LevelController levelController;
     private MoveBlock mb;
-    public bool isCheck = false;
+    private bool isCheck = false;
+
+    //id targetPicture
+    public int IDPicture;
     // Start is called before the first frame update
     void Start()
     {
@@ -52,10 +55,23 @@ public class PictureJam : MonoBehaviour
             }
         }
         isCheck = true;
+        levelController.Level.CompletedPicture(IDPicture);
         levelController.Level.UnlockIceBlock();
+        RefreshBlock();
         levelController.Level.CheckWin(true);
-        
         return true;
+    }
+
+    private void RefreshBlock()
+    {
+        mb.RefreshBlock();
+        gameObject.SetActive(false);
+
+        for (int i = 0; i < childBlocks.Length; i++)
+        {
+            childBlocks[i].RefreshBlock();
+            childBlocks[i].gameObject.SetActive(false);
+        }
     }
 
 }

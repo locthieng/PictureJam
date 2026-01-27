@@ -119,6 +119,7 @@ public class BoosterItem : MonoBehaviour
                 {
                     Debug.Log("clock");
                     // Kiểm tra điều kiện sử dụng booster
+                    StageController.Instance.isBonusTime = true;
                     break;
                 }
             case BoosterType.Hammer:
@@ -129,7 +130,7 @@ public class BoosterItem : MonoBehaviour
             case BoosterType.IceClock:
                 {
                     Debug.Log("IceClock");
-                    // Kiểm tra điều kiện sử dụng booster
+                    GameUIController.Instance.UseButtonIceClock();
                     break;
                 }
             case BoosterType.Scissors:

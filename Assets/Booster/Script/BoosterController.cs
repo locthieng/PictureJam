@@ -26,6 +26,7 @@ public class BoosterItemData
     public bool Loop;
     public bool IsIntroduced;
     public string tutorialText;
+    public bool PreLevel;
 }
 
 public class BoosterController : MonoBehaviour
@@ -77,24 +78,16 @@ public class BoosterController : MonoBehaviour
         switch (booster)
         {
             case BoosterType.Clock:
-                //Gọi hàm xử lý
                 break;
             case BoosterType.Hammer:
-                //Gọi hàm xử lý
                 break;
             case BoosterType.IceClock:
-                usingHammer = true;
-                //GameUIController.Instance.SetTextForBoosterHammer(true);
-                //GameUIController.Instance.SetAlphaBoosterUI(false);
                 break;
             case BoosterType.Scissors:
-                //Gọi hàm xử lý
                 break;
             case BoosterType.Magnet:
-                //Gọi hàm xử lý
                 break;
             case BoosterType.Glove:
-                //Gọi hàm xử lý
                 break;
             default:
                 break;

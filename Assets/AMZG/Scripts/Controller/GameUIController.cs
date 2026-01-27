@@ -31,6 +31,10 @@ public class GameUIController : MonoBehaviour
     [SerializeField] private UIDailyBonus uiDailyBonus;
     [SerializeField] public UIClock uiClock;
     [SerializeField] public UILife uiLife;
+    [SerializeField] private CanvasGroup coinInGame;
+    [SerializeField] private UIClockCreative uiIceClock;
+    [SerializeField] private PreItemPopUp preItemPopUp;
+
     [SerializeField] public UIRevive uiRevive;
     [SerializeField] public UILevelHardWarning uiLevelHardWarning;
     [SerializeField] private NewBoosterPopUp newBoosterPopUp;
@@ -43,7 +47,6 @@ public class GameUIController : MonoBehaviour
     [SerializeField] private CanvasGroup resultWin;
     [SerializeField] private CanvasGroup resultFail;
     [SerializeField] private ParticleSystem eVictory;
-    [SerializeField] private CoinEffect coinEffect;
 
     [SerializeField] private TMPro.TMP_Text levelCurrent;
 
@@ -52,6 +55,7 @@ public class GameUIController : MonoBehaviour
 
     private bool isUION;
     private bool isClockStarted = false;
+    [HideInInspector] public bool isFreeze;
 
     public static bool IsUIMatchWidth
     {
@@ -94,8 +98,10 @@ public class GameUIController : MonoBehaviour
                 inGameUI.blocksRaycasts = false;
                 startUI.alpha = 1;
                 startUI.blocksRaycasts = true;
+                SetCoinInGame(false);
                 break;
             case StageScreen.InGame:
+                SetCoinInGame(false);
                 inGameUI.alpha = 1;
                 inGameUI.blocksRaycasts = true;
                 startUI.alpha = 0;
@@ -123,19 +129,30 @@ public class GameUIController : MonoBehaviour
 
     public void ShowInGameUI(int level)
     {
+        //Show Anim CLock + Hammer nếu đc dùng
+
         SwitchStageUI();
         levelCurrent.text = "Level " + level.ToString();
-        //SetClock(true);
+        ShowCoin();
+
         //SetUp();
     }
 
     public void SetUp()
     {
+        if (items != null)
+        {
+            for (int i = 0; i < items.Length; i++)
+            {
+                items[i].SetUp(BoosterController.Instance.boostersData[i].Type);
+            }
+        }
+
         // new booster
         for (int i = 0; i < items.Length; i++)
         {
             BoosterItemData itemData = BoosterController.Instance.boostersData[(int)items[i].boosterType];
-            if (itemData.UnlockLevel == DataController.Instance.Data.LevelIndex)
+            if (itemData.UnlockLevel == DataController.Instance.Data.LevelIndex && !itemData.PreLevel)
             {
                 ShowBoosterItemUnlockPopup(itemData);
                 SetUpTutorialUnlockItem(items[i], itemData.tutorialText);
@@ -154,6 +171,21 @@ public class GameUIController : MonoBehaviour
             }
         }
     }
+
+    public void SetUpPreLevelBooster()
+    {
+        for (int i = 0; i < items.Length; i++)
+        {
+            BoosterItemData itemData = BoosterController.Instance.boostersData[(int)items[i].boosterType];
+
+            if (itemData.PreLevel) items[i].SetUp(BoosterController.Instance.boostersData[i].Type);
+        }
+    }
+
+    public void ShowCoin()
+    {
+        UICoin.Instance.UpdateCoin(null, 0, 0);
+    }    
 
     public void UpdateCoin(TMPro.TextMeshProUGUI txtCoin, int previousValue, int value, float duration = 1f, Action callback = null)
     {
@@ -216,7 +248,7 @@ public class GameUIController : MonoBehaviour
 
     public void StartClock()
     {
-        if (isClockStarted) return;
+        if (isClockStarted || isFreeze) return;
 
         isClockStarted = true;
         SetClock(true);
@@ -326,6 +358,33 @@ public class GameUIController : MonoBehaviour
         else
             uiRevive.Close();
     }
+    
+    public void ShowPreItemPopUp(bool show)
+    {
+        if (show)
+            preItemPopUp.Show();
+        else
+            preItemPopUp.Close();
+    }
+
+    public void BonusTime(float bonusTime)
+    {
+        SetClock(true);
+        uiClock.BonusTime(bonusTime);
+    }
+
+    public void SetCoinInGame(bool active)
+    {
+        coinInGame.alpha = active ? 1 : 0;
+        coinInGame.blocksRaycasts = active;
+    }
+
+    public void UseButtonIceClock()
+    {
+        uiIceClock.ShowClock(true);
+        SetClock(false);
+        isFreeze = true;
+    }    
 
     public void SetUpTutorialUnlockItem(BoosterItem item, string text)
     {

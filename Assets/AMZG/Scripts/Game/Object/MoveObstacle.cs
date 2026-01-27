@@ -1,4 +1,5 @@
 ﻿using TMPro.Examples;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum ObstacleType
@@ -6,7 +7,7 @@ public enum ObstacleType
     Normal,
     Horizontal,
     Vertical,
-    Immoblie
+    Iron
 }
 
 public class MoveObstacle : MonoBehaviour
@@ -54,7 +55,10 @@ public class MoveObstacle : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (Type == ObstacleType.Immoblie) return;
+        if (Type == ObstacleType.Iron) return;
+
+        GameUIController.Instance?.StartClock();
+
         isDragging = true;
         SetCollidersLayer(LayerMaskToLayer(moveBlockMask));
 
@@ -71,7 +75,7 @@ public class MoveObstacle : MonoBehaviour
 
     void OnMouseUp()
     {
-        if (Type == ObstacleType.Immoblie) return;
+        if (Type == ObstacleType.Iron) return;
 
         isDragging = false;
 
@@ -87,6 +91,31 @@ public class MoveObstacle : MonoBehaviour
         BoardController.Instance?.ClearShadows();
     }
 
+    public Vector3 GetConstrainedPosition(ObstacleType obstacleType, Vector3 currentPos, Vector3 targetNextPos)
+    {
+        Vector3 filteredPos = targetNextPos;
+
+        switch (obstacleType)
+        {
+            case ObstacleType.Horizontal:
+                filteredPos.z = currentPos.z;
+                break;
+
+            case ObstacleType.Vertical:
+                filteredPos.x = currentPos.x;
+                break;
+
+            case ObstacleType.Iron:
+                filteredPos = currentPos;
+                break;
+
+            case ObstacleType.Normal:
+            default:
+                break;
+        }
+
+        return filteredPos;
+    }
 
     private void SetCollidersLayer(int layer)
     {
@@ -111,7 +140,7 @@ public class MoveObstacle : MonoBehaviour
 
     void OnMouseDrag()
     {
-        if (Type == ObstacleType.Immoblie) return;
+        if (Type == ObstacleType.Iron) return;
 
         Plane plane = new Plane(Vector3.up, Vector3.up * yHeight);
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -138,7 +167,7 @@ public class MoveObstacle : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!isDragging || Type == ObstacleType.Immoblie) return;
+        if (!isDragging || Type == ObstacleType.Iron) return;
 
         Vector3 current = transform.position;
         Vector3 desired = targetPosition;
@@ -202,6 +231,8 @@ public class MoveObstacle : MonoBehaviour
 
 
         nextPosition.y = yHeight;
+        nextPosition = GetConstrainedPosition(Type, current, nextPosition);
+
         rb.MovePosition(nextPosition);
 
     }

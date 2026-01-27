@@ -8,7 +8,9 @@ using UnityEngine.UI;
 
 public class UICoin : MonoBehaviour
 {
-    [SerializeField] private TMPro.TextMeshProUGUI[] txtCoin;
+    public static UICoin Instance { get; set; }
+
+    [SerializeField] public TMPro.TextMeshProUGUI[] txtCoin;
     [SerializeField] private Transform coinIconPrefab;
     [SerializeField] private Transform coinStartIcon;
     [SerializeField] private Transform coinEndIcon;
@@ -16,6 +18,16 @@ public class UICoin : MonoBehaviour
     private rfloat randMoneyMoveRadius = new rfloat(3f, 4f);
     private Vector3 movePos;
     private float angle;
+
+    private void Start()
+    {
+        Instance = this;
+    }
+
+    public void ShowFlyingClaim(int amount, Action callback)
+    {
+        ShowFlyingCoinsFrom(flyingCoinsContainer, amount, callback);
+    }    
 
     public void ShowFlyingCoinsFrom(Transform coinStart, int total, Action callback)
     {
@@ -65,7 +77,7 @@ public class UICoin : MonoBehaviour
         }
     }
 
-    public void UpdateCoin(TMPro.TextMeshProUGUI txtCoin, int previousValue, int value, float duration = 1f, Action callback = null)
+    /*public void UpdateCoin(TMPro.TextMeshProUGUI txtCoin, int previousValue, int value, float duration = 1f, Action callback = null)
     {
         if (txtCoin == null)
         {
@@ -82,7 +94,9 @@ public class UICoin : MonoBehaviour
             txtCoin.text = f >= 1000 ? (f / 1000f).ToString("0.0") + "k" : f.ToString("0"); ;
             //txtCoinCollected.text = (f - previousValue).ToString("0");
         }).setOnComplete(callback);
-    }
+        CoinSystem.Instance.SaveCoin();
+
+    }*/
 
     public void UpdateCoin(TMPro.TextMeshProUGUI txtCoin, int changeValue, float duration = 0.4f, Action callback = null)
     {
@@ -96,9 +110,11 @@ public class UICoin : MonoBehaviour
         {
             LeanTween.scale(txtCoin.gameObject, Vector3.one, 0.25f);
         });
-        LeanTween.value(CoinSystem.Instance.Coin - changeValue, CoinSystem.Instance.Coin, duration).setOnUpdate((float f) =>
+        LeanTween.value(CoinSystem.Instance.coin - changeValue, CoinSystem.Instance.coin, duration).setOnUpdate((float f) =>
         {
             txtCoin.text = f >= 1000 ? (f / 1000f).ToString("0.0") + "k" : f.ToString("0"); ;
         }).setEase(LeanTweenType.linear).setOnComplete(callback);
+
+        CoinSystem.Instance.SaveCoin();
     }
 }

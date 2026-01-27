@@ -23,7 +23,7 @@ public class UIRefillLifePopup : PopUp
 
     public void OnPurchase()
     {
-        if (CoinSystem.Instance.Coin < price)
+        if (CoinSystem.Instance.coin < price)
         {
             //GameUIController.Instance.ShowLog(transform.parent, "Not enough coin!");
             //GameUIController.Instance.ShowCoinPlusPopup(GlobalController.CurrentStage == StageScreen.Home ? "home_feature_popup" : "ingame_feature_popup");
@@ -31,7 +31,7 @@ public class UIRefillLifePopup : PopUp
             return;
         }
         LifeSystem.Instance.currentLife = LifeSystem.Instance.MaxLife;
-        CoinSystem.Instance.Coin -= price;
+        CoinSystem.Instance.coin -= price;
         DataController.Instance.SaveData();
         //GameUIController.Instance.UpdateCoin(null, -price);
         //SetOnHidden(OnRefill);

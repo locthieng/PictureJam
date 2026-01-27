@@ -9,12 +9,12 @@ public class CoinSystem : MonoBehaviour
 
     private const string COIN_KEY = "PLAYER_COIN";
 
-    private int _coin;
-    public int Coin
+    public int coin;
+    /*public int Coin
     {
         get => _coin;
         set => _coin = value;
-    }
+    }*/
 
     private void Awake()
     {
@@ -32,15 +32,15 @@ public class CoinSystem : MonoBehaviour
 
     #region Load / Save
 
-    private void LoadCoin()
+    public void LoadCoin()
     {
-        _coin = PlayerPrefs.GetInt(COIN_KEY, 0);
+        coin = PlayerPrefs.GetInt(COIN_KEY, 0);
         Notify();
     }
 
-    private void SaveCoin()
+    public void SaveCoin()
     {
-        PlayerPrefs.SetInt(COIN_KEY, _coin);
+        PlayerPrefs.SetInt(COIN_KEY, coin);
         PlayerPrefs.Save();
     }
 
@@ -50,19 +50,20 @@ public class CoinSystem : MonoBehaviour
 
     public void AddCoin(int amount)
     {
-        if (amount <= 0) return;
+        Debug.Log(coin + "Coin");
+        if (amount < 0) return;
 
-        _coin += amount;
+        coin += amount;
         SaveCoin();
         Notify();
     }
 
     public bool SpendCoin(int amount)
     {
-        if (amount <= 0) return true;
-        if (_coin < amount) return false;
+        if (amount < 0) return true;
+        if (coin < amount) return false;
 
-        _coin -= amount;
+        coin -= amount;
         SaveCoin();
         Notify();
         return true;
@@ -70,20 +71,20 @@ public class CoinSystem : MonoBehaviour
 
     public void SetCoin(int value)
     {
-        _coin = Mathf.Max(0, value);
+        coin = Mathf.Max(0, value);
         SaveCoin();
         Notify();
     }
 
     public bool HasEnough(int amount)
     {
-        return _coin >= amount;
+        return coin >= amount;
     }
 
     #endregion
 
     private void Notify()
     {
-        OnCoinChanged?.Invoke(_coin);
+        OnCoinChanged?.Invoke(coin);
     }
 }

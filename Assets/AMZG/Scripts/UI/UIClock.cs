@@ -6,14 +6,22 @@ public class UIClock : MonoBehaviour
 {
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private float countdownTime = 600f;
+    [SerializeField] private int[] TimeLevel;
 
     private float currentTime;
     public bool isRunning = false;
     public bool isActive = false;
+    private int timeBoosterClock = 10;
 
     void OnEnable()
     {
-        ResetAndStart();
+        if (GlobalController.Instance != null)
+        {
+            countdownTime = TimeLevel[GlobalController.CurrentLevelIndex - 1];
+        }
+        if (StageController.Instance.isBonusTime) countdownTime += timeBoosterClock;
+
+        ResetAndStart(countdownTime);
     }
 
     void Update()
@@ -29,7 +37,11 @@ public class UIClock : MonoBehaviour
         else
         {
             isRunning = false;
-            if (LevelController.Instance.Level.targetPicture > 0) StageController.Instance.End(false);
+            if (LevelController.Instance.Level.targetPicture > 0)
+            {
+                LifeSystem.Instance.ConsumeLife();
+                StageController.Instance.End(false);
+            }    
             else
             { 
                 StageController.Instance.End(true);
@@ -43,9 +55,14 @@ public class UIClock : MonoBehaviour
         isActive = b;
     }
 
-    private void ResetAndStart()
+    public void BonusTime(float bonus)
     {
-        currentTime = countdownTime;
+        ResetAndStart(bonus);
+    }
+
+    private void ResetAndStart(float time)
+    {
+        currentTime = time;
         isRunning = true;
         UpdateCountdownText(currentTime);
     }

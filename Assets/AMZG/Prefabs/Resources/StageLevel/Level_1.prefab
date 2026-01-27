@@ -934,6 +934,9 @@ MonoBehaviour:
     m_Bits: 0
   Type: 0
   colliders: []
+  numIceBlock: 0
+  Child: {fileID: 0}
+  Parent: {fileID: 0}
 --- !u!1 &1328671231654223199
 GameObject:
   m_ObjectHideFlags: 0
@@ -1238,6 +1241,9 @@ MonoBehaviour:
     m_Bits: 1
   Type: 0
   colliders: []
+  numIceBlock: 0
+  Child: {fileID: 0}
+  Parent: {fileID: 0}
 --- !u!54 &2162941286026001283
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1906,6 +1912,9 @@ MonoBehaviour:
     m_Bits: 1
   Type: 0
   colliders: []
+  numIceBlock: 0
+  Child: {fileID: 0}
+  Parent: {fileID: 0}
 --- !u!54 &2402813953488136180
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1952,7 +1961,7 @@ MonoBehaviour:
   childBlocks:
   - {fileID: 5933152292644098502}
   - {fileID: 2797860344932662213}
-  isCheck: 0
+  IDPicture: 0
 --- !u!1 &3275253097132931160
 GameObject:
   m_ObjectHideFlags: 0
@@ -2376,6 +2385,9 @@ MonoBehaviour:
     m_Bits: 1
   Type: 0
   colliders: []
+  numIceBlock: 0
+  Child: {fileID: 0}
+  Parent: {fileID: 0}
 --- !u!54 &4786947602528011948
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2868,6 +2880,9 @@ MonoBehaviour:
     m_Bits: 1
   Type: 0
   colliders: []
+  numIceBlock: 0
+  Child: {fileID: 0}
+  Parent: {fileID: 0}
 --- !u!54 &5510395026415667185
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3063,6 +3078,9 @@ MonoBehaviour:
     m_Bits: 1
   Type: 0
   colliders: []
+  numIceBlock: 0
+  Child: {fileID: 0}
+  Parent: {fileID: 0}
 --- !u!54 &7528465105184920506
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3136,9 +3154,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8daea2e3305b82b48bf6eb4436972b35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataAsset: {fileID: 0}
+  DataAsset: {fileID: 11400000, guid: 5188e1bc9f38c3c46b9c12618b4e4627, type: 2}
   moveBlocks: []
+  moveObstacles: []
+  pictures: []
   targetPicture: 1
+  boardTransform: {fileID: 0}
   IsHard: 0
 --- !u!1 &4898128203688845619
 GameObject:
@@ -3622,6 +3643,9 @@ MonoBehaviour:
     m_Bits: 1
   Type: 0
   colliders: []
+  numIceBlock: 0
+  Child: {fileID: 0}
+  Parent: {fileID: 0}
 --- !u!54 &769786906097169163
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3740,6 +3764,9 @@ MonoBehaviour:
     m_Bits: 0
   Type: 0
   colliders: []
+  numIceBlock: 0
+  Child: {fileID: 0}
+  Parent: {fileID: 0}
 --- !u!54 &4641938913437084812
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4199,6 +4226,9 @@ MonoBehaviour:
     m_Bits: 0
   Type: 0
   colliders: []
+  numIceBlock: 0
+  Child: {fileID: 0}
+  Parent: {fileID: 0}
 --- !u!1 &6182943748478481587
 GameObject:
   m_ObjectHideFlags: 0
@@ -4256,6 +4286,9 @@ MonoBehaviour:
     m_Bits: 1
   Type: 0
   colliders: []
+  numIceBlock: 0
+  Child: {fileID: 0}
+  Parent: {fileID: 0}
 --- !u!54 &6200399036114524827
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4868,6 +4901,9 @@ MonoBehaviour:
     m_Bits: 0
   Type: 0
   colliders: []
+  numIceBlock: 0
+  Child: {fileID: 0}
+  Parent: {fileID: 0}
 --- !u!1 &7269404524646010744
 GameObject:
   m_ObjectHideFlags: 0
@@ -4925,6 +4961,9 @@ MonoBehaviour:
     m_Bits: 1
   Type: 0
   colliders: []
+  numIceBlock: 0
+  Child: {fileID: 0}
+  Parent: {fileID: 0}
 --- !u!54 &7305705002736038936
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5035,6 +5074,9 @@ MonoBehaviour:
     m_Bits: 1
   Type: 0
   colliders: []
+  numIceBlock: 0
+  Child: {fileID: 0}
+  Parent: {fileID: 0}
 --- !u!1 &7448067630507159475
 GameObject:
   m_ObjectHideFlags: 0

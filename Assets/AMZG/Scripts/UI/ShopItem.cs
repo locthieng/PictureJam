@@ -124,7 +124,7 @@ public class ShopItem : MonoBehaviour
     public void OnPurchase()
     {
         int realCost = Data.ValueInCoin > 0 ? (Data.UCTotal - Data.UCCurrent) * Data.ValueInCoin : Data.UCTotal;
-        if (realCost > /*DataController.Instance.Data.Coin */ CoinSystem.Instance.Coin)
+        if (realCost > /*DataController.Instance.Data.Coin */ CoinSystem.Instance.coin)
         {
             shop.OnNotEnoughCoin();
         }

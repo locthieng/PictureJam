@@ -51,7 +51,7 @@ public class GlobalController : MonoBehaviour
     public bool ForTesting = false;
     public static int NumLevelsTillSpecial;
     public static int SpecialLevelGap = 8;
-
+    [HideInInspector] public int bonusTime = 10;
     [HideInInspector]
     //public float adDuration;
     public bool IsInfiniteLife { get; set; }

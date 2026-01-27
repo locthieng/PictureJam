@@ -94,7 +94,7 @@ public class CoinEffect : MonoBehaviour
         {
             LeanTween.scale(txtCoin.gameObject, Vector3.one, 0.25f);
         });
-        LeanTween.value(CoinSystem.Instance.Coin - changeValue, CoinSystem.Instance.Coin, duration).setOnUpdate((float f) =>
+        LeanTween.value(CoinSystem.Instance.coin - changeValue, CoinSystem.Instance.coin, duration).setOnUpdate((float f) =>
         {
             txtCoin.text = f >= 1000 ? (f / 1000f).ToString("0.0") + "k" : f.ToString("0"); ;
         }).setEase(LeanTweenType.linear).setOnComplete(callback);

@@ -44,9 +44,38 @@ public class MoveBlock : MonoBehaviour
             Child.Parent = this;
             colliders = GetComponentsInChildren<Collider>();
             combinedBounds = GetCombinedBounds();
-        } 
-            
+        }
+
+        SetUp(Type);
     }
+
+    public void SetUp(BlockType type)
+    {
+        // SetUp 
+        switch (type)
+        {
+            case BlockType.Normal:
+                break;
+
+            case BlockType.Horizontal:
+                break;
+
+            case BlockType.Vertical:
+                break;
+
+            case BlockType.Ice:
+                break;
+
+            case BlockType.Nailed:
+                break;
+
+            case BlockType.Glued:
+                break;
+
+            default:
+                break;
+        }
+    }    
 
     private void CalculateSizes()
     {
@@ -65,7 +94,6 @@ public class MoveBlock : MonoBehaviour
             Parent.OnMouseDown();
             return;
         }
-        Debug.Log(name);
         GameUIController.Instance?.StartClock();
 
         isDragging = true;
@@ -77,7 +105,6 @@ public class MoveBlock : MonoBehaviour
         if (plane.Raycast(ray, out float distance))
         {
             Vector3 hitPoint = ray.GetPoint(distance);
-            // Offset = Vị trí vật thể - Điểm chuột chạm vào
             dragOffset = transform.position - hitPoint;
         }
     }
@@ -124,41 +151,40 @@ public class MoveBlock : MonoBehaviour
         return 0;
     }
 
-    public void TypeCanMove(BlockType blockType, Vector3 nextPosition)
+    // Set pos for Type
+    public Vector3 GetConstrainedPosition(BlockType blockType, Vector3 currentPos, Vector3 targetNextPos)
     {
+        Vector3 filteredPos = targetNextPos;
+
         switch (blockType)
         {
-            case BlockType.Normal:
-                break;
-
             case BlockType.Horizontal:
-                nextPosition.x = 0;
+                filteredPos.z = currentPos.z;
                 break;
 
             case BlockType.Vertical:
-                nextPosition.z = 0;
+                filteredPos.x = currentPos.x;
                 break;
 
             case BlockType.Ice:
                 if (numIceBlock > 0)
                 {
-                    nextPosition.x = 0;
-                    nextPosition.z = 0;
+                    filteredPos = currentPos;
                 }
                 break;
-            
-            case BlockType.Glued:
-                break;
-            
+
             case BlockType.Nailed:
-                nextPosition.x = 0;
-                nextPosition.z = 0;
+                filteredPos = currentPos;
                 break;
 
+            case BlockType.Normal:
+            case BlockType.Glued:
             default:
                 break;
         }
-    }    
+
+        return filteredPos;
+    }
 
 
 
@@ -250,7 +276,7 @@ public class MoveBlock : MonoBehaviour
 
 
         nextPosition.y = yHeight;
-        TypeCanMove(Type, nextPosition);
+        nextPosition = GetConstrainedPosition(Type, current, nextPosition);
 
         rb.MovePosition(nextPosition);
 
@@ -289,6 +315,24 @@ public class MoveBlock : MonoBehaviour
             //move normal
         }
     }
+
+    public void RefreshBlock()
+    {
+        if (Child != null)
+        {
+            Child.Parent = null;
+            Child.transform.SetParent(board.transform);
+            Child = null;
+        } 
+
+        if (Parent != null)
+        {
+            Parent.Child = null;
+            transform.SetParent(board.transform);
+            Parent = null;
+        }    
+            
+    }    
 
     private void OnDrawGizmosSelected()
     {

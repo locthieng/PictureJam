@@ -74,7 +74,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b16980c3b980bcb4daaa9174754ea895, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boosterType: 10
+  boosterType: 30
   boosterButton: {fileID: 0}
   lockCover: {fileID: 6763524098140605169}
   levelUnlock: {fileID: 1552377983017032277}
